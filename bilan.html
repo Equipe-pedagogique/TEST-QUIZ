@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilan Détaillé - Test de Recrutement</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <style>
+        :root { --primary-color: #0055aa; --secondary-color: #f4f7f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #e9ecef; padding: 20px; }
+        .no-print { text-align: center; margin-bottom: 20px; }
+        
+        /* Style du bouton PDF */
+        .btn-pdf { background-color: #d9534f; color: white; padding: 12px 25px; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 16px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .btn-pdf:hover { background-color: #c9302c; }
+
+        /* Conteneur du Bilan */
+        #bilan-a-imprimer { background: white; max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 8px; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
+        
+        .header { border-bottom: 3px solid var(--primary-color); margin-bottom: 30px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        h1 { color: var(--primary-color); margin: 0; font-size: 24px; }
+        
+        .info-section { background: var(--secondary-color); padding: 20px; border-radius: 5px; margin-bottom: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .info-item { font-size: 16px; }
+        .label { font-weight: bold; color: #555; }
+
+        .resultats-zone { margin-top: 20px; line-height: 1.6; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: var(--primary-color); color: white; }
+    </style>
+</head>
+<body>
+
+    <div class="no-print">
+        <button class="btn-pdf" onclick="exporterPDF()">📥 Télécharger le Bilan en PDF</button>
+    </div>
+
+    <div id="bilan-a-imprimer">
+        <div class="header">
+            <h1>RAPPORT DE TEST INDIVIDUEL</h1>
+            <div id="date-jour" style="color: #666; font-style: italic;"></div>
+        </div>
+
+        <div class="info-section">
+            <div class="info-item"><span class="label">Candidat :</span> <span id="afficheNom">Chargement...</span></div>
+            <div class="info-item"><span class="label">Concession :</span> <span id="afficheConcession">Chargement...</span></div>
+        </div>
+
+        <div class="resultats-zone">
+            <h3>Résultats détaillés par question</h3>
+            <div id="zone-unitaire">
+                <p style="color: #999;">Analyse des réponses en cours...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. Récupération des données Storyline dans l'URL
+        const params = new URLSearchParams(window.location.search);
+        const nom = params.get('nom') || "Non renseigné";
+        const concession = params.get('concession') || "Non renseigné";
+
+        // 2. Affichage immédiat dans la page
+        document.getElementById('afficheNom').innerText = nom;
+        document.getElementById('afficheConcession').innerText = concession;
+        document.getElementById('date-jour').innerText = "Le " + new Date().toLocaleDateString('fr-FR');
+
+        // 3. Fonction de génération PDF
+        function exporterPDF() {
+            const element = document.getElementById('bilan-a-imprimer');
+            const options = {
+                margin: 0.5,
+                filename: 'Test_Recrutement_' + nom.replace(/\s+/g, '_') + '.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+            html2pdf().set(options).from(element).save();
+        }
+
+        /* NOTE : Si vous avez un script existant qui génère les résultats unitaires, 
+           assurez-vous qu'il écrit ses résultats dans l'élément ID "zone-unitaire".
+        */
+    </script>
+</body>
+</html>
